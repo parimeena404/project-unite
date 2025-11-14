@@ -48,6 +48,9 @@ export default async function RootLayout({
                 <a href="/dashboard" className="hover:text-[#6bffb8]">Dashboard</a>
               </li>
               <li>
+                <a href="/knowledge-lab" className="hover:text-[#6bffb8]">Knowledge Lab</a>
+              </li>
+              <li>
                 <div className="rounded-md px-2 py-1">
                   <LoginButton />
                 </div>

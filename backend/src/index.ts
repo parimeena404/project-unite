@@ -7,6 +7,7 @@ import issuesRouter from "./routes/issues";
 import matchRouter from "./routes/match";
 import impactRouter from "./routes/impact";
 import aiRouter from "./routes/ai";
+import leaderboardRouter from "./routes/leaderboard";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -38,6 +39,7 @@ app.use("/api/issues", issuesRouter);
 app.use("/api/match", matchRouter);
 app.use("/api/impact", impactRouter);
 app.use("/api/ai", aiRouter);
+app.use("/api/leaderboard", leaderboardRouter);
 
 app.get("/", (req, res) => res.json({ ok: true, message: "Project UNITE API" }));
 
