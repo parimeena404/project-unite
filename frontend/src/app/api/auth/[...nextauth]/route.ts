@@ -2,21 +2,45 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
-export const authOptions: NextAuthOptions = {
-  providers: [
+// Check if auth is configured
+const isAuthConfigured = 
+  process.env.NEXTAUTH_SECRET &&
+  (process.env.GOOGLE_CLIENT_ID || process.env.GITHUB_ID);
+
+// Only add providers if credentials are available
+const providers = [];
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }),
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  );
+}
+if (process.env.GITHUB_ID && process.env.GITHUB_SECRET) {
+  providers.push(
     GithubProvider({
-      clientId: process.env.GITHUB_ID || "",
-      clientSecret: process.env.GITHUB_SECRET || "",
-    }),
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    })
+  );
+}
+
+export const authOptions: NextAuthOptions = {
+  providers: providers.length > 0 ? providers : [
+    // Dummy provider to prevent NextAuth from crashing
+    {
+      id: "credentials",
+      name: "Credentials",
+      type: "credentials",
+      credentials: {},
+      authorize: async () => null,
+    } as any,
   ],
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build-only",
   callbacks: {
     async jwt({ token, user }) {
       // On sign in, attach a minimal user payload to the token
